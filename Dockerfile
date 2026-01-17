@@ -15,7 +15,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # 우리가 방금 만든 nginx.conf 설정 파일을 덮어씌움
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 80 포트 오픈
-EXPOSE 80
+# 80, 443 포트 오픈
+EXPOSE 80 443
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
