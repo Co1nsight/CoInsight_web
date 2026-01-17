@@ -1,0 +1,89 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [ release ]
+  pull_request:
+    branches: [ release ]
+
+env:
+  # 프론트엔드 이미지 이름 설정 (구분을 위해 이름 변경)
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/coinsight-frontend
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - uses: actions/checkout@v4
+
+      # 2. Docker 이미지 빌드 및 푸시
+      # (Node.js 설치 불필요 -> Dockerfile에서 Multi-stage build로 처리함)
+      - name: Docker build and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          # Dockerfile이 있는 경로에서 빌드 (현재 루트 기준)
+          docker build --platform linux/amd64 -t ${{ env.DOCKER_IMAGE }}:latest .
+          docker push ${{ env.DOCKER_IMAGE }}:latest
+
+      # 3. GitHub Actions IP 가져오기 (보안 그룹 허용을 위해)
+      - name: Get Github Actions IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      # 4. AWS 자격 증명 설정
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # 본인의 리전 확인 (서울이면 ap-northeast-2)
+
+      # 5. GitHub Actions IP를 AWS 보안 그룹(SSH 포트)에 추가
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        continue-on-error: true
+
+      # 6. SSH로 EC2 접속 및 배포 (프론트엔드만 교체)
+      - name: Deploy to EC2 with Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }} # SSH 포트 (보통 22)
+          script: |
+            cd /home/ubuntu/spring-server # docker-compose.yml이 있는 경로
+
+            # Docker 로그인
+            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+            # 최신 프론트엔드 이미지 Pull
+            sudo docker-compose pull frontend
+
+            # [중요] 백엔드는 건드리지 않고, frontend 컨테이너만 재생성
+            # --no-deps: 의존성(백엔드) 재시작 방지
+            # --build: 필요시 빌드 옵션 강제
+            sudo docker-compose up -d --no-deps frontend
+
+            # 사용하지 않는 이미지 정리 (용량 확보)
+            sudo docker image prune -f
+
+            echo "Waiting for frontend to start..."
+            sleep 5
+
+            # 상태 확인
+            if sudo docker-compose ps | grep "frontend" | grep -q "Up"; then
+              echo "✅ Frontend deployed successfully"
+            else
+              echo "❌ Frontend deployment failed"
+              exit 1
+            fi
+
+      # 7. AWS 보안 그룹에서 IP 제거 (보안 유지)
+      - name: Remove Github Actions IP from Security Group
+        if: always()
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.ip.outputs.ipv4 }}/32
