@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/common/navbar";
+import Navbar from "../components/common/Navbar";
 
 const CoinDetailPage = () => {
     const coinName = "KRW-BTC";
