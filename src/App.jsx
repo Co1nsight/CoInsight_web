@@ -1,11 +1,23 @@
 import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainPage from './pages/MainPage'
+import CoinDetailPage from './pages/CoinDetailPage';
+import NewsDetailPage from './pages/NewsDetailPage';
+import GamePage from './pages/GamePage';
+import LeaderBoardPage from './pages/LeaderBoardPage';
 
 function App() {
 
   return (
-    <>
-      <div>CoinSight</div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path='/coindetail' element={<CoinDetailPage />} />
+        <Route path='/newsdetail' element={<NewsDetailPage />} />
+        <Route path='/game' element={<GamePage />} />
+        <Route path='/leaderboard' element={<LeaderBoardPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
