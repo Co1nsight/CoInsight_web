@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/common/Navbar";
+import CoinChart from "../components/CoinDetail/CoinChart";
 
 const CoinDetailPage = () => {
     const coinName = "KRW-BTC";
@@ -20,7 +21,7 @@ const CoinDetailPage = () => {
         fetch(`https://api.bithumb.com/v1/ticker?markets=${coinName}`, options)
             .then(response => response.json())
             .then(response => {
-                console.log(response);
+                //console.log(response);
                 const formattedPrice = formatPrice(response[0].acc_trade_price_24h);
                 setTradePrice(formattedPrice);
                 const p = response[0].trade_price.toLocaleString('ko-KR');
@@ -75,6 +76,8 @@ const CoinDetailPage = () => {
                         </div>
                     </div>
                 </div>
+
+                <CoinChart coinName={coinName}/>
             </div>
         </div>
     )
