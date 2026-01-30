@@ -2,6 +2,31 @@ import { init, dispose } from "klinecharts";
 import { useEffect, useState, useRef } from "react";
 
 const CoinChart = ({coinName}) => {
+    const customStyles = {
+        candle: {
+            bar: {
+                upColor: '#4073FF',
+                downColor: '#FF4D66',
+                upBorderColor: '#4073FF',
+                downBorderColor: '#FF4D66',
+                upWickColor: '#4073FF',
+                downWickColor: '#FF4D66',               
+            },
+            priceMark: {
+                last: {
+                    upColor: '#4073FF',
+                    downColor: '#FF4D66',
+                },
+                high: {
+                    color: '#4073FF',
+                },
+                low: {
+                    color: '#FF4D66',
+                }
+            }
+        }
+    }
+
     const [coinInfo, setCoinInfo] = useState(null);
     const chartRef = useRef(null);
 
@@ -96,10 +121,10 @@ const CoinChart = ({coinName}) => {
         if (!coinInfo) return;
 
         if (!chartRef.current) {
-            chartRef.current = init('chart'); // 차트 생성
+            chartRef.current = init('chart', {styles: customStyles}); // 차트 생성
         }
         const chart = chartRef.current;
-
+        chart.setStyles(customStyles)
         chart.setSymbol({ ticker: coinName })
         chart.setPeriod({ span: 1, type: 'day' })
         chart.setDataLoader({
@@ -113,6 +138,7 @@ const CoinChart = ({coinName}) => {
             chartRef.current = null;
         }
     }, [coinInfo, coinName]);
+
 
 
     return (
