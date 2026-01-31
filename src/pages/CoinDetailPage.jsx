@@ -8,11 +8,30 @@ const CoinDetailPage = () => {
     const [tradePrice, setTradePrice] = useState(0);
     const [fluctuationRange, setFluctuationRange] = useState(0);
     const [isPositive, setIsPositive] = useState(true);
+    const [todayDate, setTodayDate] = useState(null);
+    const [todayTime, setTodayTime] = useState(null);
+    
 
     const formatPrice = (value) => {
         if (!value) return "0억";
         const formatPrice = Number(value) / 100000000;
         return `${formatPrice.toLocaleString(undefined, {maximumFractionDigits: 1})}억`;
+    }
+
+    const getDateTime = () => {
+        var today = new Date();
+
+        var year = today.getFullYear();
+        var month = ('0' + (today.getMonth() + 1)).slice(-2);
+        var day = ('0' + today.getDate()).slice(-2);
+
+        setTodayDate(year + '년 ' + month  + '월 ' + day + '일');
+
+        var hours = ('0' + today.getHours()).slice(-2); 
+        var minutes = ('0' + today.getMinutes()).slice(-2);
+        var seconds = ('0' + today.getSeconds()).slice(-2); 
+
+        setTodayTime(hours + ':' + minutes  + ':' + seconds);
     }
 
     useEffect (() => {
@@ -42,6 +61,8 @@ const CoinDetailPage = () => {
                 if (changeRate < 0) setIsPositive(false);
             })
             .catch(err => console.error(err));
+
+        getDateTime();
     }, [coinName]);
 
     return  (
@@ -55,7 +76,7 @@ const CoinDetailPage = () => {
                         </div>
 
                         <div className="text-[16px] text-[#787878]">
-                            2026년 01월 23일
+                            {todayDate} {todayTime} 기준
                         </div>
                     </div>
 
