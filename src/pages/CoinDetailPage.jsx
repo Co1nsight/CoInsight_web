@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/common/Navbar";
 import CoinChart from "../components/CoinDetail/CoinChart";
+//import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
 
 const CoinDetailPage = () => {
     const coinName = "KRW-BTC";
+    const ticker = "BTC";
     const [currentPrice, setCurrentPrice] = useState(0);
     const [tradePrice, setTradePrice] = useState(0);
     const [fluctuationRange, setFluctuationRange] = useState(0);
@@ -48,6 +50,15 @@ const CoinDetailPage = () => {
             })
             .catch(err => console.error(err));
 
+        // const fetchCoinInfo = async () => {
+        //     try {
+        //         const res = await getCoinInfo(ticker);
+        //         console.log(res);
+        //     } catch (error) {
+        //         console.error("데이터 호출 실패 : ", error);
+        //     }
+        // }
+
         fetch(`https://api.bithumb.com/public/candlestick/BTC_KRW/1h`, options)
             .then(res => res.json())
             .then(res => {
@@ -62,8 +73,9 @@ const CoinDetailPage = () => {
             })
             .catch(err => console.error(err));
 
+        //fetchCoinInfo();
         getDateTime();
-    }, [coinName]);
+    }, [coinName, ticker]);
 
     return  (
         <div>
