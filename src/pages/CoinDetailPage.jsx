@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/common/Navbar";
 import CoinChart from "../components/CoinDetail/CoinChart";
+import History from "../components/CoinDetail/History";
 //import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
 
 const CoinDetailPage = () => {
@@ -109,6 +110,8 @@ const CoinDetailPage = () => {
                         </div>
                     </div>
                 </div>
+
+                <History />
 
                 <CoinChart coinName={coinName}/>
             </div>
