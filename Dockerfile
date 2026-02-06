@@ -1,5 +1,10 @@
 # [1단계] React 빌드하기 (Node.js 환경)
 FROM node:18-alpine as build
+
+# 빌드 시 환경변수 받기
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 WORKDIR /app
 # 패키지 정보 복사 및 설치
 COPY package.json package-lock.json ./

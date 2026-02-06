@@ -1,17 +1,40 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/common/Navbar";
+import CoinChart from "../components/CoinDetail/CoinChart";
+import History from "../components/CoinDetail/History";
+//import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
 
 const CoinDetailPage = () => {
     const coinName = "KRW-BTC";
+    const ticker = "BTC";
     const [currentPrice, setCurrentPrice] = useState(0);
     const [tradePrice, setTradePrice] = useState(0);
     const [fluctuationRange, setFluctuationRange] = useState(0);
     const [isPositive, setIsPositive] = useState(true);
+    const [todayDate, setTodayDate] = useState(null);
+    const [todayTime, setTodayTime] = useState(null);
+    
 
     const formatPrice = (value) => {
         if (!value) return "0억";
         const formatPrice = Number(value) / 100000000;
         return `${formatPrice.toLocaleString(undefined, {maximumFractionDigits: 1})}억`;
+    }
+
+    const getDateTime = () => {
+        var today = new Date();
+
+        var year = today.getFullYear();
+        var month = ('0' + (today.getMonth() + 1)).slice(-2);
+        var day = ('0' + today.getDate()).slice(-2);
+
+        setTodayDate(year + '년 ' + month  + '월 ' + day + '일');
+
+        var hours = ('0' + today.getHours()).slice(-2); 
+        var minutes = ('0' + today.getMinutes()).slice(-2);
+        var seconds = ('0' + today.getSeconds()).slice(-2); 
+
+        setTodayTime(hours + ':' + minutes  + ':' + seconds);
     }
 
     useEffect (() => {
@@ -20,13 +43,22 @@ const CoinDetailPage = () => {
         fetch(`https://api.bithumb.com/v1/ticker?markets=${coinName}`, options)
             .then(response => response.json())
             .then(response => {
-                console.log(response);
+                //console.log(response);
                 const formattedPrice = formatPrice(response[0].acc_trade_price_24h);
                 setTradePrice(formattedPrice);
                 const p = response[0].trade_price.toLocaleString('ko-KR');
                 setCurrentPrice(p);
             })
             .catch(err => console.error(err));
+
+        // const fetchCoinInfo = async () => {
+        //     try {
+        //         const res = await getCoinInfo(ticker);
+        //         console.log(res);
+        //     } catch (error) {
+        //         console.error("데이터 호출 실패 : ", error);
+        //     }
+        // }
 
         fetch(`https://api.bithumb.com/public/candlestick/BTC_KRW/1h`, options)
             .then(res => res.json())
@@ -41,7 +73,10 @@ const CoinDetailPage = () => {
                 if (changeRate < 0) setIsPositive(false);
             })
             .catch(err => console.error(err));
-    }, [coinName]);
+
+        //fetchCoinInfo();
+        getDateTime();
+    }, [coinName, ticker]);
 
     return  (
         <div>
@@ -54,7 +89,7 @@ const CoinDetailPage = () => {
                         </div>
 
                         <div className="text-[16px] text-[#787878]">
-                            2026년 01월 23일
+                            {todayDate} {todayTime} 기준
                         </div>
                     </div>
 
@@ -75,6 +110,10 @@ const CoinDetailPage = () => {
                         </div>
                     </div>
                 </div>
+
+                <History />
+
+                <CoinChart coinName={coinName}/>
             </div>
         </div>
     )
