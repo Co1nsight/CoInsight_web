@@ -5,8 +5,8 @@ const History = () => {
     //mock data
     const mockData= [
         {id: 1, date: "2026.02.08", time: "16:00", prediction: "호재 ↑", result: "53", isSuccess: true},
-        {id: 1, date: "2026.02.08", time: "16:30", prediction: "호재 ↑", result: "54", isSuccess: true},
-        {id: 1, date: "2026.02.08", time: "17:00", prediction: "악재 ↓", result: "42", isSuccess: false},
+        {id: 2, date: "2026.02.08", time: "16:30", prediction: "호재 ↑", result: "54", isSuccess: true},
+        {id: 3, date: "2026.02.08", time: "17:00", prediction: "악재 ↓", result: "42", isSuccess: false},
     ]
 
     const [selectedTime, setSelectedTime] = useState("1h");
