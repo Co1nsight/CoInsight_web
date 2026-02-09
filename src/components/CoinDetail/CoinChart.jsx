@@ -29,6 +29,8 @@ const customStyles = {
 
 const CoinChart = ({coinName}) => {
     const [coinInfo, setCoinInfo] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
     const chartRef = useRef(null);
 
     const formatData = (data) => {
@@ -42,42 +44,30 @@ const CoinChart = ({coinName}) => {
         })).reverse(); // 과거 -> 현재 순서로 바꾸기
     };
 
-    const onClickMinute = async () => {
-        try {
-            const res = await getCandleInfo("BTC");
-            if (res && res.data.length > 0) {
-                const formattedData = formatData(res.data);
-                setCoinInfo(formattedData);
-            }
-        } catch (error) {
-            console.error("데이터 불러오기 실패 : ", error);
-        }
-    }    
+    const fetchCandleData = async (unit = 1) => {
+        setIsLoading(true);
+        setIsError(false);
 
-    const onClickHour = async () => {
         try {
-            const res = await getCandleInfo("BTC", 60);
+            const res = await getCandleInfo("BTC", unit);
             if (res && res.data.length > 0) {
                 const formattedData = formatData(res.data);
                 setCoinInfo(formattedData);
+            } else {
+                setIsError(true);
             }
         } catch (error) {
+            setIsError(true);
             console.error("데이터 불러오기 실패 : ", error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
-    const onClickFourHour = async () => {
-        try {
-            const res = await getCandleInfo("BTC", 240);
-            if (res && res.data.length > 0) {
-                const formattedData = formatData(res.data);
-                setCoinInfo(formattedData);
-            }
-        } catch (error) {
-            console.error("데이터 불러오기 실패 : ", error);
-        }
-    }
-
+    const onClickMinute = () => fetchCandleData();  
+    const onClickHour = () => fetchCandleData(60);
+    const onClickFourHour = () => fetchCandleData(240);
+    
     const onClickDay = () => {
         const options = {method: 'GET', headers: {accept: 'application/json'}};
 
@@ -93,19 +83,7 @@ const CoinChart = ({coinName}) => {
     }
 
     useEffect(() => {
-        const fetchMinute = async () => {
-            try {
-                const res = await getCandleInfo("BTC");
-                if (res && res.data.length > 0) {
-                    const formattedData = formatData(res.data);
-                    setCoinInfo(formattedData);
-                }
-            } catch (error) {
-                console.error("데이터 불러오기 실패 : ", error);
-            }
-        }
-
-        fetchMinute();
+        fetchCandleData();
     }, [coinName]);
 
     useEffect(() => {
@@ -167,7 +145,19 @@ const CoinChart = ({coinName}) => {
                     1일
                 </div>
             </div>
-            <div>
+            <div className="relative">
+                {isError && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
+                        <p>데이터를 불러오는 데 실패했습니다.</p>
+                        <button
+                            onClick={() => fetchCandleData()}
+                            className="mt-2 px-2 py-1 text-sm flex justify-center items-center bg-gray-200 rounded-md"
+                        >
+                            다시 시도하기
+                        </button>
+                    </div>
+                )}
+                {isLoading && <div className="absolute inset-0 z-10 bg-gray-100 animate-pulse"/>}
                 <div id="chart" className="w-full h-150"/>
             </div>
         </div>
