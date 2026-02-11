@@ -3,6 +3,7 @@ import Navbar from "../components/common/Navbar";
 import CoinChart from "../components/CoinDetail/CoinChart";
 import History from "../components/CoinDetail/History";
 import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
+import BasicLogo from "../assets/pixelarticons--coin.svg";
 
 const CoinDetailPage = () => {
     const ticker = "BTC";
@@ -10,6 +11,7 @@ const CoinDetailPage = () => {
     const [coinInfo, setCoinInfo] = useState({
         name: "",
         ticker1: "",
+        logoURL: BasicLogo,
         currentPrice: "0",
         tradePrice: "0",
         fluctuationRange: "0",
@@ -38,6 +40,7 @@ const CoinDetailPage = () => {
                     ...prev,
                     name: data.name,
                     ticker1: data.ticker,
+                    logoURL: data.logoUrl,
                     currentPrice: Number(data.currentPrice).toLocaleString('ko-KR'),
                     tradePrice: formatPrice(data.tradingVolume),
                     date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
@@ -74,9 +77,15 @@ const CoinDetailPage = () => {
             <div className="p-10">
                 <div className="border border-[#E0E0E0] bg-[#FFFFFF] h-35 p-8 rounded-sm items-center justify-between flex flex-row">
                     <div className="flex flex-col">
-                        <div className="text-[36px] font-bold text-[#212121]">
-                            {coinInfo.name}({coinInfo.ticker1})
+                        <div className="flex flex-row items-center gap-2">
+                            <div>
+                                <img src={coinInfo.logoURL} alt="logo" className="w-10 h-10"/>
+                            </div>
+                            <div className="text-[36px] font-bold text-[#212121]">
+                                {coinInfo.name}({coinInfo.ticker1})
+                            </div>
                         </div>
+                        
 
                         <div className="text-[16px] text-[#787878]">
                             {coinInfo.date} {coinInfo.time} 기준
