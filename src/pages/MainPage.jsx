@@ -18,7 +18,7 @@ const MainPage = () => {
     return (
         <div>
             <Navbar />
-            <div className="flex flex-row gap-6 p-8">
+            <div className="flex flex-row gap-6 p-8 min-w-[1200px]">
                 {/* 왼쪽: 뉴스 영역 */}
                 <div className="flex-1 flex flex-col gap-5">
                     <NewsSearchBar />
