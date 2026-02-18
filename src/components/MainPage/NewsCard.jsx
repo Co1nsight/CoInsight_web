@@ -10,7 +10,7 @@ const NewsCard = ({ status, title, coin, time, confidence }) => {
                     <RoundButton content={tagContent} status={status} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                    <p className="text-[15px] font-semibold text-[#212121] leading-snug">
+                    <p className="text-[16px] font-medium text-[#212121] leading-snug">
                         {title}
                     </p>
                     <p className="text-[13px] text-[#9E9E9E]">
