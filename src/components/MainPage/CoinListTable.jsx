@@ -1,18 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getTickers } from "../../apis/Market/tickers";
 
-const dummyCoins = [
-    { name: "비트코인", ticker: "BTC", price: "142,580,000", change: "+5.2", isPositive: true, volume: "1,245억" },
-    { name: "이더리움", ticker: "ETH", price: "4,825,000", change: "-2.8", isPositive: false, volume: "865억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-    { name: "리플", ticker: "XRP", price: "3,250", change: "+12.5", isPositive: true, volume: "523억" },
-];
+const formatPrice = (price) => {
+    return price.toLocaleString("ko-KR");
+};
+
+const formatTradeValue = (value) => {
+    const eok = value / 100000000;
+    if (eok >= 1) {
+        return `${Math.round(eok).toLocaleString("ko-KR")}억`;
+    }
+    return value.toLocaleString("ko-KR");
+};
+
+const formatChangeRate = (rate) => {
+    const percent = (rate * 100).toFixed(2);
+    return rate >= 0 ? `+${percent}` : percent;
+};
 
 const CoinListTable = () => {
     const [activeTab, setActiveTab] = useState("domestic");
+    const [coins, setCoins] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchCoins = async (marketType) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await getTickers(marketType);
+            setCoins(res.data || []);
+        } catch (err) {
+            setError("시세 정보를 불러오는데 실패했습니다.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const marketType = activeTab === "domestic" ? "KRW" : "BTC";
+        fetchCoins(marketType);
+    }, [activeTab]);
 
     return (
         <div className="border border-[#E0E0E0] bg-white rounded-lg">
@@ -23,8 +52,8 @@ const CoinListTable = () => {
                     <button
                         onClick={() => setActiveTab("domestic")}
                         className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors cursor-pointer ${activeTab === "domestic"
-                                ? "bg-[#1F78F2] text-white"
-                                : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
+                            ? "bg-[#1F78F2] text-white"
+                            : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
                             }`}
                     >
                         국내시세
@@ -32,8 +61,8 @@ const CoinListTable = () => {
                     <button
                         onClick={() => setActiveTab("overseas")}
                         className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors cursor-pointer ${activeTab === "overseas"
-                                ? "bg-[#1F78F2] text-white"
-                                : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
+                            ? "bg-[#1F78F2] text-white"
+                            : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
                             }`}
                     >
                         해외시세
@@ -54,28 +83,39 @@ const CoinListTable = () => {
             </div>
 
             {/* Table Rows */}
-            {dummyCoins.map((coin, index) => (
-                <div
-                    key={index}
-                    className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
-                >
-                    <span className="text-[14px] font-medium text-[#212121]">
-                        {coin.name} ({coin.ticker})
-                    </span>
-                    <span className="text-[14px] text-[#212121] text-right">
-                        ₩{coin.price}
-                    </span>
-                    <span className={`text-[14px] font-semibold text-right ${coin.isPositive ? "text-[#FF4242]" : "text-[#4073FF]"
-                        }`}>
-                        {coin.change}%
-                    </span>
-                    <span className="text-[14px] text-[#787878] text-right">
-                        ₩{coin.volume}
-                    </span>
+            {loading ? (
+                <div className="px-6 py-8 text-center text-[14px] text-[#9E9E9E]">
+                    로딩 중...
                 </div>
-            ))}
+            ) : error ? (
+                <div className="px-6 py-8 text-center text-[14px] text-[#FF4242]">
+                    {error}
+                </div>
+            ) : (
+                coins.map((coin, index) => (
+                    <div
+                        key={`${coin.symbol}-${index}`}
+                        className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
+                    >
+                        <span className="text-[14px] font-medium text-[#212121]">
+                            {coin.name} ({coin.symbol})
+                        </span>
+                        <span className="text-[14px] text-[#212121] text-right">
+                            {activeTab === "domestic" ? "₩" : ""}{formatPrice(coin.price)}
+                        </span>
+                        <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"
+                            }`}>
+                            {formatChangeRate(coin.changeRate)}%
+                        </span>
+                        <span className="text-[14px] text-[#787878] text-right">
+                            {activeTab === "domestic" ? "₩" : ""}{formatTradeValue(coin.tradeValue)}
+                        </span>
+                    </div>
+                ))
+            )}
         </div>
     )
 }
 
 export default CoinListTable;
+
