@@ -2,6 +2,7 @@ const RoundButton = ({ content, status }) => {
     const buttonColor = {
         positive: 'bg-[#FF4D66]',
         negative: 'bg-[#4073FF]',
+        neutral: 'bg-[#9E9E9E]',
         predict_success: 'bg-[#47D994]',
         predict_fail: 'bg-[#8C8C8C]'
     }
@@ -9,6 +10,7 @@ const RoundButton = ({ content, status }) => {
     const Icon = {
         positive: "mingcute:arrow-up-fill",
         negative: "mingcute:arrow-down-fill",
+        neutral: "mingcute:minus-fill",
         predict_success: "mingcute:check-fill",
         predict_fail: "fa6-solid:xmark",
     }[status];
