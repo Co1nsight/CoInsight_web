@@ -25,8 +25,13 @@ const DailyNewsCard = ({status, title, publisher, reliability, time}) => {
         else return `한참 전`;
     };
 
+    const RoundReliability = (r) => {
+        const percentage = r*100;
+        return Math.ceil(percentage);
+    }
+
     return (
-        <div className="flex flex-col bg-[#FAFAFA] px-4 py-4 gap-2 cursor-pointer">
+        <div className="flex flex-col bg-[#FAFAFA] px-4 py-4 gap-2 cursor-pointer hover:bg-[#f4f4f4] transition-colors">
             <div className="flex flex-row items-center gap-3">
                 <RoundButton status={labelType[status]} content={contentType[status]}/>
                 <div className="text-[16px] font-semibold">
@@ -37,7 +42,7 @@ const DailyNewsCard = ({status, title, publisher, reliability, time}) => {
             <div className="flex flex-row gap-1 items-center text-[#7A7A7A] text-[14px]">
                 <div>{CalculateTime(time)}</div>
                 |
-                <div>신뢰도: {reliability}</div>
+                <div>신뢰도: 약 {RoundReliability(reliability)}%</div>
                 |
                 <div>출처: {publisher}</div>
             </div>
