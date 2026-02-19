@@ -18,13 +18,15 @@ const RoundButton = ({ content, status }) => {
     return (
         <div className={`
             ${buttonColor[status]}
-            w-[60px] h-[24px] flex items-center justify-center rounded-4xl text-[11px] text-white font-bold gap-0.5`
+            px-3 h-7 flex items-center justify-center rounded-4xl text-[11px] text-white font-bold gap-0.5 whitespace-nowrap w-fit`
         }>
-            <p>{content}</p>
-            <iconify-icon
-                icon={Icon}
-                className="flex items-center text-[14px]"
-            ></iconify-icon>
+            <p className="leading-none shrink-0">{content}</p>
+            <div className="flex items-center justify-center">
+                <iconify-icon
+                    icon={Icon}
+                    className="text-[13px] flex"
+                ></iconify-icon>
+            </div>
         </div>
     )
 }
