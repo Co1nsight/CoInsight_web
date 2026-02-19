@@ -4,6 +4,7 @@ import CoinChart from "../components/CoinDetail/CoinChart";
 import History from "../components/CoinDetail/History";
 import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
 import BasicLogo from "../assets/pixelarticons--coin.svg";
+import DailyNews from "../components/CoinDetail/DailyNews";
 
 const CoinDetailPage = () => {
     const ticker = "BTC";
@@ -111,6 +112,7 @@ const CoinDetailPage = () => {
                 </div>
 
                 <History />
+                <DailyNews />
                 <CoinChart coinName={"KRW-BTC"}/>
             </div>
         </div>
