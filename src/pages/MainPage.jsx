@@ -1,20 +1,33 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/common/Navbar";
 import NewsSearchBar from "../components/MainPage/NewsSearchBar";
 import NewsCard from "../components/MainPage/NewsCard";
 import CoinSearchBar from "../components/MainPage/CoinSearchBar";
 import CoinListTable from "../components/MainPage/CoinListTable";
-
-const dummyNews = [
-    { status: "positive", title: "비트코인, SEC 현물 ETF 승인 임박...가격 급등 전망", coin: "BTC", time: "2시간 전", confidence: 87 },
-    { status: "negative", title: "이더리움 메인넷 업데이트 지연, 투자자 우려 확산", coin: "ETC", time: "1일 전", confidence: 94 },
-    { status: "negative", title: "리플 메인넷 업데이트 지연, 투자자 우려 확산", coin: "XRP", time: "3일 전", confidence: 94 },
-    { status: "negative", title: "리플 메인넷 업데이트 지연, 투자자 우려 확산", coin: "XRP", time: "3일 전", confidence: 94 },
-    { status: "negative", title: "리플 메인넷 업데이트 지연, 투자자 우려 확산", coin: "XRP", time: "3일 전", confidence: 94 },
-    { status: "negative", title: "리플 메인넷 업데이트 지연, 투자자 우려 확산", coin: "XRP", time: "3일 전", confidence: 94 },
-    { status: "negative", title: "리플 메인넷 업데이트 지연, 투자자 우려 확산", coin: "XRP", time: "3일 전", confidence: 94 },
-];
+import { getNewsAnalysis } from "../apis/News/analysis";
 
 const MainPage = () => {
+    const [newsList, setNewsList] = useState([]);
+    const [newsLoading, setNewsLoading] = useState(true);
+    const [newsError, setNewsError] = useState(null);
+
+    useEffect(() => {
+        const fetchNews = async () => {
+            try {
+                setNewsLoading(true);
+                setNewsError(null);
+                const res = await getNewsAnalysis(0, 20);
+                setNewsList(res.data?.content || []);
+            } catch (err) {
+                setNewsError("뉴스를 불러오는데 실패했습니다.");
+                console.error(err);
+            } finally {
+                setNewsLoading(false);
+            }
+        };
+        fetchNews();
+    }, []);
+
     return (
         <div>
             <Navbar />
@@ -25,16 +38,26 @@ const MainPage = () => {
                     <div className="border border-[#E0E0E0] bg-white rounded-lg p-6">
                         <h2 className="text-[18px] font-bold text-[#212121] mb-2">AI 뉴스 분석</h2>
                         <div>
-                            {dummyNews.map((news, index) => (
-                                <NewsCard
-                                    key={index}
-                                    status={news.status}
-                                    title={news.title}
-                                    coin={news.coin}
-                                    time={news.time}
-                                    confidence={news.confidence}
-                                />
-                            ))}
+                            {newsLoading ? (
+                                <div className="py-8 text-center text-[14px] text-[#9E9E9E]">
+                                    로딩 중...
+                                </div>
+                            ) : newsError ? (
+                                <div className="py-8 text-center text-[14px] text-[#FF4242]">
+                                    {newsError}
+                                </div>
+                            ) : (
+                                newsList.map((news) => (
+                                    <NewsCard
+                                        key={news.id}
+                                        title={news.title}
+                                        sentimentLabel={news.sentimentLabel}
+                                        sentimentScore={news.sentimentScore}
+                                        relatedCryptos={news.relatedCryptos}
+                                        publishedAt={news.publishedAt}
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
