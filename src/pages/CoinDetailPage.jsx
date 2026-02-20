@@ -5,9 +5,10 @@ import History from "../components/CoinDetail/History";
 import { getCoinInfo } from "../apis/CoinDetail/coinInfo";
 import BasicLogo from "../assets/pixelarticons--coin.svg";
 import DailyNews from "../components/CoinDetail/DailyNews";
+import { useParams } from "react-router-dom";
 
 const CoinDetailPage = () => {
-    const ticker = "BTC";
+    const { ticker } = useParams();
 
     const [coinInfo, setCoinInfo] = useState({
         name: "",
@@ -111,9 +112,9 @@ const CoinDetailPage = () => {
                     </div>
                 </div>
 
-                <History />
-                <DailyNews />
-                <CoinChart coinName={"KRW-BTC"}/>
+                <History ticker={ticker}/>
+                <DailyNews ticker={ticker}/>
+                <CoinChart ticker={ticker}/>
             </div>
         </div>
     )

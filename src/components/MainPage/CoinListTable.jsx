@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getTickers } from "../../apis/Market/tickers";
+import { useNavigate } from "react-router-dom";
 
 const formatPrice = (price) => {
     return price.toLocaleString("ko-KR");
@@ -19,6 +20,8 @@ const formatChangeRate = (rate) => {
 };
 
 const CoinListTable = () => {
+    const nav = useNavigate();
+
     const [activeTab, setActiveTab] = useState("domestic");
     const [coins, setCoins] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -96,6 +99,7 @@ const CoinListTable = () => {
                     <div
                         key={`${coin.symbol}-${index}`}
                         className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
+                        onClick={() => nav(`/coindetail/${coin.symbol}`)}
                     >
                         <span className="text-[14px] font-medium text-[#212121]">
                             {coin.name} ({coin.symbol})

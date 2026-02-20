@@ -2,7 +2,7 @@ import { instance } from "../../utils/axios";
 
 export const getCoinNews = async (ticker, page=0, size=20) => {
     try {
-        const res = await instance.get(`/api/v1/crypto/${ticker}/news`, {
+        const res = await instance.get(`/api/v1/crypto/${ticker}/news/recent`, {
             params: {page, size}
         });
         //console.log(res);
