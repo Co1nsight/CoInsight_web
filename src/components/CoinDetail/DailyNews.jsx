@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import DailyNewsCard from "./DailyNewsCard";
 import { getCoinNews } from "../../apis/CoinDetail/coinNews";
 
-const DailyNews = () => {
-    const ticker = "BTC";
+const DailyNews = ({ticker}) => {
     const [newsData, setNewsData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(null);
@@ -18,13 +17,48 @@ const DailyNews = () => {
                 setNewsData(res.data?.content || []);
             } catch (error) {
                 console.log("백엔드 불러오기 실패 : ", error);
-                setIsError(error);
+                setIsError("데이터를 불러오는 중에 문제가 발생했습니다.");
             } finally {
                 setIsLoading(false);
             }
         }
         fetchCoinNews();
     }, [ticker]);
+
+    const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                    뉴스를 불러오는 중입니다.
+                </div>
+            )
+        }
+        if (isError) {
+            return (
+                <div className="py-8 text-center text-[16px] text-[#FF4242]">
+                    {isError}
+                </div>
+            )
+        }
+        if (newsData.length === 0) {
+            return (
+                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                    등록된 뉴스가 없습니다.
+                </div>
+            )
+        }
+
+        return newsData.map((news) => (
+            <DailyNewsCard 
+                key={news.newsId}
+                status={news.sentimentLabel}
+                title={news.title}
+                publisher={news.publisher}
+                reliability={news.sentimentScore}
+                time={news.publishedAt}
+            />
+        ))
+    }
     
 
     return (
@@ -34,26 +68,7 @@ const DailyNews = () => {
             </h1>
 
             <div className="flex flex-col gap-4 overflow-scroll overflow-x-hidden">
-                {isLoading ? (
-                    <div className="py-8 text-center text-[14px] text-[#9E9E9E]">
-                        로딩 중...
-                    </div>
-                ) : isError ? (
-                    <div className="py-8 text-center text-[14px] text-[#FF4242]">
-                        {isError}
-                    </div>
-                ) : (
-                    newsData.map((news) => (
-                        <DailyNewsCard 
-                            key={news.id}
-                            status={news.sentimentLabel}
-                            title={news.title}
-                            publisher={news.publisher}
-                            reliability={news.sentimentScore}
-                            time={news.publishedAt}
-                        />
-                    ))
-                )}
+                {renderContent()}
             </div>
         </div>
     )

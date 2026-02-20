@@ -27,7 +27,7 @@ const customStyles = {
     }
 }
 
-const CoinChart = ({coinName}) => {
+const CoinChart = ({ ticker }) => {
     const [coinInfo, setCoinInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -49,7 +49,7 @@ const CoinChart = ({coinName}) => {
         setIsError(false);
 
         try {
-            const res = await getCandleInfo("BTC", unit);
+            const res = await getCandleInfo(ticker, unit);
             if (res && res.data.length > 0) {
                 const formattedData = formatData(res.data);
                 setCoinInfo(formattedData);
@@ -71,7 +71,7 @@ const CoinChart = ({coinName}) => {
     const onClickDay = () => {
         const options = {method: 'GET', headers: {accept: 'application/json'}};
 
-        fetch(`https://api.bithumb.com/v1/candles/days?market=${coinName}&count=200`, options)
+        fetch(`https://api.bithumb.com/v1/candles/days?market=${ticker}&count=200`, options)
             .then(response => response.json())
             .then(response => {
                 if (response && response.length > 0) {
@@ -84,7 +84,7 @@ const CoinChart = ({coinName}) => {
 
     useEffect(() => {
         fetchCandleData();
-    }, [coinName]);
+    }, [ticker]);
 
     useEffect(() => {
         if (!coinInfo) return;
@@ -94,7 +94,7 @@ const CoinChart = ({coinName}) => {
         }
         const chart = chartRef.current;
         chart.setStyles(customStyles)
-        chart.setSymbol({ ticker: coinName })
+        chart.setSymbol({ ticker: ticker })
         chart.setPeriod({ span: 1, type: 'day' })
         chart.setDataLoader({
             getBars: ({ callback}) => {
@@ -106,13 +106,13 @@ const CoinChart = ({coinName}) => {
             dispose('chart');
             chartRef.current = null;
         }
-    }, [coinInfo, coinName]);
+    }, [coinInfo, ticker]);
 
     return (
         <div className="mt-10">
             <div className="flex flex-row gap-4">
                 <div className="font-semibold text-[20px]">
-                    {coinName}
+                    {ticker}
                 </div>
                 <div 
                     className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
