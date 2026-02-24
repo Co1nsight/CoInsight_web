@@ -15,6 +15,7 @@ const CoinDetailPage = () => {
         ticker1: "",
         logoURL: BasicLogo,
         currentPrice: "0",
+        rawCurrentPrice: "0",
         tradePrice: "0",
         fluctuationRange: "0",
         isPositive: true,
@@ -44,6 +45,7 @@ const CoinDetailPage = () => {
                     ticker1: data.ticker,
                     logoURL: data.logoUrl,
                     currentPrice: Number(data.currentPrice).toLocaleString('ko-KR'),
+                    rawCurrentPrice: data.currentPrice,
                     tradePrice: formatPrice(data.tradingVolume),
                     date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
                     time: `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`
@@ -112,7 +114,7 @@ const CoinDetailPage = () => {
                     </div>
                 </div>
 
-                <History ticker={ticker}/>
+                <History ticker={ticker} currentPrice={coinInfo.rawCurrentPrice} />
                 <DailyNews ticker={ticker}/>
                 <CoinChart ticker={ticker}/>
             </div>
