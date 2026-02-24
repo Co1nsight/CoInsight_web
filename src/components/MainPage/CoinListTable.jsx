@@ -3,10 +3,12 @@ import { getTickers } from "../../apis/Market/tickers";
 import { useNavigate } from "react-router-dom";
 
 const formatPrice = (price) => {
+    if (price == null) return "-";
     return price.toLocaleString("ko-KR");
 };
 
 const formatTradeValue = (value) => {
+    if (value == null) return "-";
     const eok = value / 100000000;
     if (eok >= 1) {
         return `${Math.round(eok).toLocaleString("ko-KR")}억`;
@@ -15,6 +17,7 @@ const formatTradeValue = (value) => {
 };
 
 const formatChangeRate = (rate) => {
+    if (rate == null) return "-";
     const percent = (rate * 100).toFixed(2);
     return rate >= 0 ? `+${percent}` : percent;
 };
