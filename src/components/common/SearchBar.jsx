@@ -1,10 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const NewsSearchBar = ({ onSearch }) => {
-    const [keyword, setKeyword] = useState("");
+const SearchBar = ({ defaultKeyword = "" }) => {
+    const [keyword, setKeyword] = useState(defaultKeyword);
+    const nav = useNavigate();
 
     const handleSearch = () => {
-        onSearch(keyword.trim());
+        const trimmed = keyword.trim();
+        if (trimmed) {
+            nav(`/search?keyword=${encodeURIComponent(trimmed)}`);
+        }
     };
 
     const handleKeyDown = (e) => {
@@ -15,7 +20,7 @@ const NewsSearchBar = ({ onSearch }) => {
 
     const handleClear = () => {
         setKeyword("");
-        onSearch("");
+        nav("/");
     };
 
     return (
@@ -31,7 +36,7 @@ const NewsSearchBar = ({ onSearch }) => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="뉴스 검색 (예: ETF, 규제, 상승)"
+                placeholder="검색어를 입력하세요 (예: 비트코인, ETF, 규제)"
                 className="w-full h-12 pl-12 pr-10 border border-[#E0E0E0] rounded-lg bg-white text-[14px] text-[#212121] placeholder-[#9E9E9E] outline-none focus:border-[#1F78F2] transition-colors"
             />
             {keyword && (
@@ -46,5 +51,4 @@ const NewsSearchBar = ({ onSearch }) => {
     )
 }
 
-export default NewsSearchBar;
-
+export default SearchBar;
