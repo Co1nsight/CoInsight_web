@@ -1,99 +1,79 @@
 import { init, dispose } from "klinecharts";
 import { useEffect, useState, useRef } from "react";
+import { getCandleInfo } from "../../apis/CoinDetail/chart";
 
-const CoinChart = ({coinName}) => {
-    const customStyles = {
-        candle: {
-            bar: {
+const customStyles = {
+    candle: {
+        bar: {
+            upColor: '#4073FF',
+            downColor: '#FF4D66',
+            upBorderColor: '#4073FF',
+            downBorderColor: '#FF4D66',
+            upWickColor: '#4073FF',
+            downWickColor: '#FF4D66',               
+        },
+        priceMark: {
+            last: {
                 upColor: '#4073FF',
                 downColor: '#FF4D66',
-                upBorderColor: '#4073FF',
-                downBorderColor: '#FF4D66',
-                upWickColor: '#4073FF',
-                downWickColor: '#FF4D66',               
             },
-            priceMark: {
-                last: {
-                    upColor: '#4073FF',
-                    downColor: '#FF4D66',
-                },
-                high: {
-                    color: '#4073FF',
-                },
-                low: {
-                    color: '#FF4D66',
-                }
+            high: {
+                color: '#4073FF',
+            },
+            low: {
+                color: '#FF4D66',
             }
         }
     }
+}
 
+const CoinChart = ({ ticker }) => {
     const [coinInfo, setCoinInfo] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
     const chartRef = useRef(null);
 
     const formatData = (data) => {
         return data.map(e => ({
             timestamp: e.timestamp,
-            open: e.opening_price,
-            high: e.high_price,
-            low: e.low_price,
-            close: e.trade_price,
-            volume: e.candle_acc_trade_volume,
+            open: e.openPrice || e.opening_price,
+            high: e.highPrice || e.high_price,
+            low: e.lowPrice || e.low_price,
+            close: e.closePrice || e.trade_price,
+            volume: e.volume || e.candle_acc_trade_volume,
         })).reverse(); // 과거 -> 현재 순서로 바꾸기
     };
 
-    const onClickMinute = () => {
-        const options = {method: 'GET', headers: {accept: 'application/json'}};
+    const fetchCandleData = async (unit = 1) => {
+        setIsLoading(true);
+        setIsError(false);
 
-        fetch(`https://api.bithumb.com/v1/candles/minutes/1?market=${coinName}&count=200`, options)
-            .then(response => response.json())
-            .then(response => {
-                //console.log(response)
-                if (response && response.length > 0) {
-                    const formattedData = formatData(response);
-                    setCoinInfo(formattedData);
-                }
-            })
-            .catch(err => console.error(err));
-    }
-        
-
-    const onClickHour = () => {
-        const options = {method: 'GET', headers: {accept: 'application/json'}};
-
-        fetch(`https://api.bithumb.com/v1/candles/minutes/60?market=${coinName}&count=200`, options)
-            .then(response => response.json())
-            .then(response => {
-                //console.log(response)
-                if (response && response.length > 0) {
-                    const formattedData = formatData(response);
-                    setCoinInfo(formattedData);
-                }
-            })
-            .catch(err => console.error(err));
+        try {
+            const res = await getCandleInfo(ticker, unit);
+            if (res && res.data.length > 0) {
+                const formattedData = formatData(res.data);
+                setCoinInfo(formattedData);
+            } else {
+                setIsError(true);
+            }
+        } catch (error) {
+            setIsError(true);
+            console.error("데이터 불러오기 실패 : ", error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
-    const onClickFourHour = () => {
-        const options = {method: 'GET', headers: {accept: 'application/json'}};
-
-        fetch(`https://api.bithumb.com/v1/candles/minutes/240?market=${coinName}&count=200`, options)
-            .then(response => response.json())
-            .then(response => {
-                //console.log(response)
-                if (response && response.length > 0) {
-                    const formattedData = formatData(response);
-                    setCoinInfo(formattedData);
-                }
-            })
-            .catch(err => console.error(err));
-    }
-
+    const onClickMinute = () => fetchCandleData();  
+    const onClickHour = () => fetchCandleData(60);
+    const onClickFourHour = () => fetchCandleData(240);
+    
     const onClickDay = () => {
         const options = {method: 'GET', headers: {accept: 'application/json'}};
 
-        fetch(`https://api.bithumb.com/v1/candles/days?market=${coinName}&count=200`, options)
+        fetch(`https://api.bithumb.com/v1/candles/days?market=${ticker}&count=200`, options)
             .then(response => response.json())
             .then(response => {
-                //console.log(response)
                 if (response && response.length > 0) {
                     const formattedData = formatData(response);
                     setCoinInfo(formattedData);
@@ -103,19 +83,8 @@ const CoinChart = ({coinName}) => {
     }
 
     useEffect(() => {
-        const options = {method: 'GET', headers: {accept: 'application/json'}};
-
-        fetch(`https://api.bithumb.com/v1/candles/minutes/1?market=${coinName}&count=200`, options)
-            .then(response => response.json())
-            .then(response => {
-                //console.log(response)
-                if (response && response.length > 0) {
-                    const formattedData = formatData(response);
-                    setCoinInfo(formattedData);
-                }
-            })
-            .catch(err => console.error(err));
-    }, [coinName]);
+        fetchCandleData();
+    }, [ticker]);
 
     useEffect(() => {
         if (!coinInfo) return;
@@ -125,7 +94,7 @@ const CoinChart = ({coinName}) => {
         }
         const chart = chartRef.current;
         chart.setStyles(customStyles)
-        chart.setSymbol({ ticker: coinName })
+        chart.setSymbol({ ticker: ticker })
         chart.setPeriod({ span: 1, type: 'day' })
         chart.setDataLoader({
             getBars: ({ callback}) => {
@@ -137,15 +106,13 @@ const CoinChart = ({coinName}) => {
             dispose('chart');
             chartRef.current = null;
         }
-    }, [coinInfo, coinName]);
-
-
+    }, [coinInfo, ticker]);
 
     return (
         <div className="mt-10">
             <div className="flex flex-row gap-4">
                 <div className="font-semibold text-[20px]">
-                    {coinName}
+                    {ticker}
                 </div>
                 <div 
                     className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
@@ -178,7 +145,19 @@ const CoinChart = ({coinName}) => {
                     1일
                 </div>
             </div>
-            <div>
+            <div className="relative">
+                {isError && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
+                        <p>데이터를 불러오는 데 실패했습니다.</p>
+                        <button
+                            onClick={() => fetchCandleData()}
+                            className="mt-2 px-2 py-1 text-sm flex justify-center items-center bg-gray-200 rounded-md"
+                        >
+                            다시 시도하기
+                        </button>
+                    </div>
+                )}
+                {isLoading && <div className="absolute inset-0 z-10 bg-gray-100 animate-pulse"/>}
                 <div id="chart" className="w-full h-150"/>
             </div>
         </div>
