@@ -1,9 +1,9 @@
 import { instance } from "../../utils/axios";
 
-export const getTickers = async (marketType = "KRW", sortBy = "tradeValue") => {
+export const getTickers = async (page = 0, size = 10) => {
     try {
-        const res = await instance.get("/api/v1/market/tickers", {
-            params: { marketType, sortBy },
+        const res = await instance.get("/api/v1/main/cryptos", {
+            params: { page, size },
         });
         return res.data;
     } catch (error) {
