@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/common/Navbar";
 import SearchBar from "../components/common/SearchBar";
 import NewsCard from "../components/MainPage/NewsCard";
@@ -8,24 +8,37 @@ import { getNewsAnalysis } from "../apis/News/analysis";
 const MainPage = () => {
     const [newsList, setNewsList] = useState([]);
     const [newsLoading, setNewsLoading] = useState(true);
+    const [newsLoadingMore, setNewsLoadingMore] = useState(false);
     const [newsError, setNewsError] = useState(null);
+    const [newsPage, setNewsPage] = useState(0);
+    const [newsHasNext, setNewsHasNext] = useState(true);
+
+    const fetchNews = useCallback(async (pageNum) => {
+        try {
+            if (pageNum === 0) setNewsLoading(true);
+            else setNewsLoadingMore(true);
+            setNewsError(null);
+            const res = await getNewsAnalysis(pageNum, 10);
+            setNewsList(prev => pageNum === 0 ? res.data?.content || [] : [...prev, ...(res.data?.content || [])]);
+            setNewsHasNext(res.data?.hasNext ?? false);
+        } catch (err) {
+            setNewsError("뉴스를 불러오는데 실패했습니다.");
+            console.error(err);
+        } finally {
+            if (pageNum === 0) setNewsLoading(false);
+            else setNewsLoadingMore(false);
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchNews = async () => {
-            try {
-                setNewsLoading(true);
-                setNewsError(null);
-                const res = await getNewsAnalysis(0, 20);
-                setNewsList(res.data?.content || []);
-            } catch (err) {
-                setNewsError("뉴스를 불러오는데 실패했습니다.");
-                console.error(err);
-            } finally {
-                setNewsLoading(false);
-            }
-        };
-        fetchNews();
-    }, []);
+        fetchNews(0);
+    }, [fetchNews]);
+
+    const loadMoreNews = () => {
+        const next = newsPage + 1;
+        setNewsPage(next);
+        fetchNews(next);
+    };
 
     return (
         <div>
@@ -55,16 +68,34 @@ const MainPage = () => {
                                         뉴스가 없습니다.
                                     </div>
                                 ) : (
-                                    newsList.map((news) => (
-                                        <NewsCard
-                                            key={news.id}
-                                            title={news.title}
-                                            sentimentLabel={news.sentimentLabel}
-                                            sentimentScore={news.sentimentScore}
-                                            relatedCryptos={news.relatedCryptos}
-                                            publishedAt={news.publishedAt}
-                                        />
-                                    ))
+                                    <>
+                                        {newsList.map((news) => (
+                                            <NewsCard
+                                                key={news.id}
+                                                title={news.title}
+                                                sentimentLabel={news.sentimentLabel}
+                                                sentimentScore={news.sentimentScore}
+                                                relatedCryptos={news.relatedCryptos}
+                                                publishedAt={news.publishedAt}
+                                            />
+                                        ))}
+                                        {newsHasNext && (
+                                            <div className="flex justify-center pt-3 border-t border-[#F0F0F0]">
+                                                <button
+                                                    onClick={loadMoreNews}
+                                                    disabled={newsLoadingMore}
+                                                    className="flex items-center gap-1 text-[13px] text-[#787878] hover:text-[#212121] transition-colors cursor-pointer disabled:opacity-50"
+                                                >
+                                                    {newsLoadingMore ? "로딩 중..." : (
+                                                        <>
+                                                            더보기
+                                                            <iconify-icon icon="mingcute:down-fill" className="text-[12px]" />
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>
