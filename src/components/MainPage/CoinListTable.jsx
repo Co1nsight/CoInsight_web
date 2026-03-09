@@ -97,14 +97,13 @@ const CoinListTable = () => {
                                 {coin.name} ({coin.ticker})
                             </span>
                             <span className="text-[14px] text-[#212121] text-right">
-                                ₩{formatPrice(coin.currentPrice)}
+                                {coin.currentPrice == null ? "-" : `₩${formatPrice(coin.currentPrice)}`}
                             </span>
-                            <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"
-                                }`}>
-                                {formatChangeRate(coin.changeRate)}%
+                            <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"}`}>
+                                {coin.changeRate == null ? "-" : `${formatChangeRate(coin.changeRate)}%`}
                             </span>
                             <span className="text-[14px] text-[#787878] text-right">
-                                ₩{formatTradeValue(coin.tradingVolume24h)}
+                                {coin.tradingVolume24h == null ? "-" : `₩${formatTradeValue(coin.tradingVolume24h)}`}
                             </span>
                         </div>
                     ))}
