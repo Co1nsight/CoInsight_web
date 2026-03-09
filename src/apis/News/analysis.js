@@ -2,7 +2,7 @@ import { instance } from "../../utils/axios";
 
 export const getNewsAnalysis = async (page = 0, size = 20) => {
     try {
-        const res = await instance.get("/api/v1/news/analysis", {
+        const res = await instance.get("/api/v1/main/news", {
             params: { page, size },
         });
         return res.data;

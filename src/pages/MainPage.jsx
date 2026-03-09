@@ -15,7 +15,7 @@ const MainPage = () => {
             try {
                 setNewsLoading(true);
                 setNewsError(null);
-                const res = await getNewsAnalysis(0, 20);
+                const res = await getNewsAnalysis(0, 10);
                 setNewsList(res.data?.content || []);
             } catch (err) {
                 setNewsError("뉴스를 불러오는데 실패했습니다.");
