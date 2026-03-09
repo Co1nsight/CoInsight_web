@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getTickers } from "../../apis/Market/tickers";
 import { useNavigate } from "react-router-dom";
 
@@ -25,59 +25,46 @@ const formatChangeRate = (rate) => {
 const CoinListTable = () => {
     const nav = useNavigate();
 
-    const [activeTab, setActiveTab] = useState("domestic");
     const [coins, setCoins] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(0);
+    const [hasNext, setHasNext] = useState(true);
 
-    const fetchCoins = async (marketType) => {
+    const fetchCoins = useCallback(async (pageNum) => {
         try {
-            setLoading(true);
+            if (pageNum === 0) setLoading(true);
+            else setLoadingMore(true);
             setError(null);
-            const res = await getTickers(marketType);
-            setCoins(res.data || []);
+            const res = await getTickers(pageNum);
+            setCoins(prev => pageNum === 0 ? res.data?.content || [] : [...prev, ...(res.data?.content || [])]);
+            setHasNext(res.data?.hasNext ?? false);
         } catch (err) {
             setError("시세 정보를 불러오는데 실패했습니다.");
             console.error(err);
         } finally {
-            setLoading(false);
+            if (pageNum === 0) setLoading(false);
+            else setLoadingMore(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        const marketType = activeTab === "domestic" ? "KRW" : "BTC";
-        fetchCoins(marketType);
-    }, [activeTab]);
+        fetchCoins(0);
+    }, [fetchCoins]);
+
+    const loadMore = () => {
+        const next = page + 1;
+        setPage(next);
+        fetchCoins(next);
+    };
+
 
     return (
         <div className="border border-[#E0E0E0] bg-white rounded-lg">
             {/* Header */}
             <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-[#F0F0F0]">
                 <h2 className="text-[18px] font-bold text-[#212121]">코인 시세</h2>
-                <div className="flex flex-row items-center gap-2">
-                    <button
-                        onClick={() => setActiveTab("domestic")}
-                        className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors cursor-pointer ${activeTab === "domestic"
-                            ? "bg-[#1F78F2] text-white"
-                            : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
-                            }`}
-                    >
-                        국내시세
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("overseas")}
-                        className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors cursor-pointer ${activeTab === "overseas"
-                            ? "bg-[#1F78F2] text-white"
-                            : "bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB]"
-                            }`}
-                    >
-                        해외시세
-                    </button>
-                    <button className="px-3 py-1.5 rounded-md text-[13px] bg-[#F5F5F5] text-[#787878] hover:bg-[#EBEBEB] transition-colors cursor-pointer flex items-center gap-1">
-                        1시간
-                        <iconify-icon icon="mingcute:down-fill" className="text-[12px]"></iconify-icon>
-                    </button>
-                </div>
             </div>
 
             {/* Table Header */}
@@ -98,27 +85,46 @@ const CoinListTable = () => {
                     {error}
                 </div>
             ) : (
-                coins.map((coin, index) => (
-                    <div
-                        key={`${coin.symbol}-${index}`}
-                        className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
-                        onClick={() => nav(`/coindetail/${coin.symbol}`)}
-                    >
-                        <span className="text-[14px] font-medium text-[#212121]">
-                            {coin.name} ({coin.symbol})
-                        </span>
-                        <span className="text-[14px] text-[#212121] text-right">
-                            {activeTab === "domestic" ? "₩" : ""}{formatPrice(coin.price)}
-                        </span>
-                        <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"
-                            }`}>
-                            {formatChangeRate(coin.changeRate)}%
-                        </span>
-                        <span className="text-[14px] text-[#787878] text-right">
-                            {activeTab === "domestic" ? "₩" : ""}{formatTradeValue(coin.tradeValue)}
-                        </span>
-                    </div>
-                ))
+                <>
+                    {coins.map((coin, index) => (
+                        <div
+                            key={`${coin.ticker}-${index}`}
+                            className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
+                            onClick={() => nav(`/coindetail/${coin.ticker}`)}
+                        >
+                            <span className="text-[14px] font-medium text-[#212121] flex items-center gap-2">
+                                <img src={coin.logoUrl} alt={coin.name} className="w-6 h-6 shrink-0" onError={(e) => { e.target.style.visibility = "hidden"; }} />
+                                {coin.name} ({coin.ticker})
+                            </span>
+                            <span className="text-[14px] text-[#212121] text-right">
+                                ₩{formatPrice(coin.currentPrice)}
+                            </span>
+                            <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"
+                                }`}>
+                                {formatChangeRate(coin.changeRate)}%
+                            </span>
+                            <span className="text-[14px] text-[#787878] text-right">
+                                ₩{formatTradeValue(coin.tradingVolume24h)}
+                            </span>
+                        </div>
+                    ))}
+                    {hasNext && (
+                        <div className="flex justify-center py-3 border-t border-[#F0F0F0]">
+                            <button
+                                onClick={loadMore}
+                                disabled={loadingMore}
+                                className="flex items-center gap-1 text-[13px] text-[#787878] hover:text-[#212121] transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                                {loadingMore ? "로딩 중..." : (
+                                    <>
+                                        더보기
+                                        <iconify-icon icon="mingcute:down-fill" className="text-[12px]" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     )
