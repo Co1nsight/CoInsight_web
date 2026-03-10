@@ -93,7 +93,21 @@ const CoinListTable = () => {
                             onClick={() => nav(`/coindetail/${coin.ticker}`)}
                         >
                             <span className="text-[14px] font-medium text-[#212121] flex items-center gap-2">
-                                <img src={coin.logoUrl} alt={coin.name} className="w-6 h-6 shrink-0" onError={(e) => { e.target.style.visibility = "hidden"; }} />
+                                <div className="w-6 h-6 rounded-full bg-[#F0F0F0] flex items-center justify-center overflow-hidden flex-shrink-0">
+                                    {coin.logoUrl ? (
+                                        <img
+                                            src={coin.logoUrl}
+                                            alt={coin.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.style.display = "none";
+                                                e.target.parentElement.innerHTML = `<span class="text-[9px] font-bold text-[#9E9E9E]">${coin.ticker.slice(0, 2)}</span>`;
+                                            }}
+                                        />
+                                    ) : (
+                                        <span className="text-[9px] font-bold text-[#9E9E9E]">{coin.ticker.slice(0, 2)}</span>
+                                    )}
+                                </div>
                                 {coin.name} ({coin.ticker})
                             </span>
                             <span className="text-[14px] text-[#212121] text-right">
