@@ -1,13 +1,13 @@
 import { instance } from "../../utils/axios";
 
-export const searchNews = async (keyword, page = 0, size = 20) => {
+export const searchAll = async (keyword, cryptoLimit = 5, newsLimit = 5) => {
     try {
-        const res = await instance.get("/api/v1/news/search", {
-            params: { keyword, page, size },
+        const res = await instance.get("/api/v1/main/search", {
+            params: { keyword, cryptoLimit, newsLimit },
         });
         return res.data;
     } catch (error) {
-        console.error("뉴스 검색 실패: ", error);
+        console.error("통합 검색 실패: ", error);
         throw error;
     }
 };
