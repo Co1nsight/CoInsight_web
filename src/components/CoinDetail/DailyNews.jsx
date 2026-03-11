@@ -9,11 +9,10 @@ const DailyNews = ({ticker}) => {
 
     useEffect(() => {
         const fetchCoinNews = async () => {
-            try {  
+            try {
                 setIsLoading(true);
                 setIsError(null);
                 const res = await getCoinNews(ticker, 0, 20);
-                //console.log(res.data);
                 setNewsData(res.data?.content || []);
             } catch (error) {
                 console.log("백엔드 불러오기 실패 : ", error);
@@ -28,7 +27,7 @@ const DailyNews = ({ticker}) => {
     const renderContent = () => {
         if (isLoading) {
             return (
-                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                <div className="py-8 text-center text-[16px] text-[#8892B0]">
                     뉴스를 불러오는 중입니다.
                 </div>
             )
@@ -42,14 +41,14 @@ const DailyNews = ({ticker}) => {
         }
         if (newsData.length === 0) {
             return (
-                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                <div className="py-8 text-center text-[16px] text-[#8892B0]">
                     등록된 뉴스가 없습니다.
                 </div>
             )
         }
 
         return newsData.map((news) => (
-            <DailyNewsCard 
+            <DailyNewsCard
                 key={news.newsId}
                 status={news.sentimentLabel}
                 title={news.title}
@@ -59,11 +58,10 @@ const DailyNews = ({ticker}) => {
             />
         ))
     }
-    
 
     return (
-        <div className="h-150 mt-6 border border-[#E0E0E0] bg-[#FFFFFF] p-8 rounded-sm flex flex-col gap-4">
-            <h1 className="text-[20px] font-bold">
+        <div className="h-150 mt-6 border border-[#233554] bg-[#112240] p-8 rounded-sm flex flex-col gap-4">
+            <h1 className="text-[20px] font-bold text-[#CCD6F6]">
                 최근 24시간 호재/악재 뉴스
             </h1>
 

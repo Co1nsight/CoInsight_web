@@ -22,7 +22,7 @@ const CoinDetailPage = () => {
         date: "",
         time: ""
     })
-    
+
 
     const formatPrice = (value) => {
         if (!value) return "0억";
@@ -79,37 +79,36 @@ const CoinDetailPage = () => {
         <div>
             <Navbar />
             <div className="p-10">
-                <div className="border border-[#E0E0E0] bg-[#FFFFFF] h-35 p-8 rounded-sm items-center justify-between flex flex-row">
+                <div className="border border-[#233554] bg-[#112240] h-35 p-8 rounded-sm items-center justify-between flex flex-row">
                     <div className="flex flex-col">
                         <div className="flex flex-row items-center gap-2">
                             <div>
                                 <img src={coinInfo.logoURL} alt="logo" className="w-10 h-10"/>
                             </div>
-                            <div className="text-[36px] font-bold text-[#212121]">
+                            <div className="text-[36px] font-bold text-[#CCD6F6]">
                                 {coinInfo.name}({coinInfo.ticker1})
                             </div>
                         </div>
-                        
 
-                        <div className="text-[16px] text-[#787878]">
+                        <div className="text-[16px] text-[#8892B0]">
                             {coinInfo.date} {coinInfo.time} 기준
                         </div>
                     </div>
 
                     <div className="flex flex-row gap-16">
                         <div className="flex flex-col gap-2">
-                            <p className="text-[14px] text-[#787878]">현재가</p>
-                            <p className="text-[28px] font-bold">₩{coinInfo.currentPrice}</p>
+                            <p className="text-[14px] text-[#8892B0]">현재가</p>
+                            <p className="text-[28px] font-bold text-[#CCD6F6]">₩{coinInfo.currentPrice}</p>
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <p className="text-[14px] text-[#787878]">1시간 등락</p>
+                            <p className="text-[14px] text-[#8892B0]">1시간 등락</p>
                             <p className={`text-[28px] font-bold ${coinInfo.isPositive ? `text-[#FF4242]` : `text-[#4073FF]`}`}>{coinInfo.fluctuationRange}%</p>
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <p className="text-[14px] text-[#787878]">24시간 거래대금</p>
-                            <p className="text-[28px] font-bold">₩{coinInfo.tradePrice}</p>
+                            <p className="text-[14px] text-[#8892B0]">24시간 거래대금</p>
+                            <p className="text-[28px] font-bold text-[#CCD6F6]">₩{coinInfo.tradePrice}</p>
                         </div>
                     </div>
                 </div>

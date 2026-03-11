@@ -3,12 +3,6 @@ import HistoryCard from "./HistoryCard";
 import { getAiPredictions } from "../../apis/CoinDetail/aihistory";
 
 const History = ({ticker, currentPrice}) => {
-    //mock data
-    // const mockData= [
-    //     {id: 1, date: "2026.02.08", time: "16:00", prediction: "호재", result: "53", isSuccess: true},
-    //     {id: 2, date: "2026.02.08", time: "16:30", prediction: "호재", result: "54", isSuccess: true},
-    //     {id: 3, date: "2026.02.08", time: "17:00", prediction: "악재", result: "42", isSuccess: false},
-    // ]
     const timeMapping = {
         "1시간": "HOUR_1",
         "3시간": "HOUR_3",
@@ -26,7 +20,6 @@ const History = ({ticker, currentPrice}) => {
                 setIsLoading(true);
                 setIsError(null);
                 const res = await getAiPredictions(ticker);
-                //console.log(res);
                 setPredictionList(res.data?.content || []);
 
             } catch (error) {
@@ -44,7 +37,7 @@ const History = ({ticker, currentPrice}) => {
     const renderContent = () => {
         if (isLoading) {
             return (
-                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                <div className="py-8 text-center text-[16px] text-[#8892B0]">
                     AI 예측 히스토리를 불러오는 중입니다.
                 </div>
             )
@@ -58,7 +51,7 @@ const History = ({ticker, currentPrice}) => {
         }
         if (predictionList.length === 0) {
             return (
-                <div className="py-8 text-center text-[16px] text-[#9E9E9E]">
+                <div className="py-8 text-center text-[16px] text-[#8892B0]">
                     AI 히스토리가 없습니다.
                 </div>
             )
@@ -66,12 +59,12 @@ const History = ({ticker, currentPrice}) => {
 
         return (
         predictionList.map((item) => {
-            const targetInterval = timeMapping[selectedTime]; //HOUR_1
+            const targetInterval = timeMapping[selectedTime];
             const verification = item.verifications?.find(v => v.intervalType === targetInterval);
             if (!verification) return null;
-           
+
             return (
-            <HistoryCard 
+            <HistoryCard
                 key={item.predictionId}
                 date={item.predictionDate}
                 time={item.predictionTime}
@@ -89,19 +82,19 @@ const History = ({ticker, currentPrice}) => {
 
     const time_type = ["1시간", "3시간", "12시간", "24시간"];
     return (
-        <div className="mt-8 border border-[#E0E0E0] bg-[#FFFFFF] p-8 rounded-sm flex flex-col">
+        <div className="mt-8 border border-[#233554] bg-[#112240] p-8 rounded-sm flex flex-col">
             <div className="flex flex-row justify-between items-center">
-                <div className="text-[20px] font-bold">
+                <div className="text-[20px] font-bold text-[#CCD6F6]">
                     AI 예측 히스토리
                 </div>
 
                 <div className="flex flex-row gap-3">
                     {time_type.map((time) => (
-                        <div 
+                        <div
                             key={time}
                             onClick={() => setSelectedTime(time)}
-                            className={`border border-[#E0E0E0] px-4 py-2 rounded-sm text-[14px] cursor-pointer flex items-center
-                                ${selectedTime === time ? "text-white bg-[#1F78F2] border-none" : "border-[#E0E0E0] text-[#616161]"}`}
+                            className={`border px-4 py-2 rounded-sm text-[14px] cursor-pointer flex items-center
+                                ${selectedTime === time ? "text-[#0A192F] bg-[#64FFDA] border-transparent" : "border-[#233554] text-[#8892B0]"}`}
                         >
                             {time}
                         </div>

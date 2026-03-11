@@ -10,7 +10,7 @@ const DailyNewsCard = ({status, title, publisher, reliability, time}) => {
         NEGATIVE : "악재",
         POSITIVE : "호재"
     }
-    
+
     const CalculateTime = (t) => {
         const getTime = new Date(t);
         const milliSeconds = new Date() - getTime;
@@ -31,15 +31,15 @@ const DailyNewsCard = ({status, title, publisher, reliability, time}) => {
     }
 
     return (
-        <div className="flex flex-col bg-[#FAFAFA] px-4 py-4 gap-2 cursor-pointer hover:bg-[#f4f4f4] transition-colors">
+        <div className="flex flex-col bg-[#0A192F] px-4 py-4 gap-2 cursor-pointer hover:bg-[#1E3A5F] transition-colors">
             <div className="flex flex-row items-center gap-3">
                 <RoundButton status={labelType[status]} content={contentType[status]}/>
-                <div className="text-[16px] font-semibold">
+                <div className="text-[16px] font-semibold text-[#CCD6F6]">
                     {title}
                 </div>
             </div>
 
-            <div className="flex flex-row gap-1 items-center text-[#7A7A7A] text-[14px]">
+            <div className="flex flex-row gap-1 items-center text-[#8892B0] text-[14px]">
                 <div>{CalculateTime(time)}</div>
                 |
                 <div>신뢰도: 약 {RoundReliability(reliability)}%</div>

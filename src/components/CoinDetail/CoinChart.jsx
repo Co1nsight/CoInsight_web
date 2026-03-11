@@ -10,7 +10,7 @@ const customStyles = {
             upBorderColor: '#4073FF',
             downBorderColor: '#FF4D66',
             upWickColor: '#4073FF',
-            downWickColor: '#FF4D66',               
+            downWickColor: '#FF4D66',
         },
         priceMark: {
             last: {
@@ -24,7 +24,21 @@ const customStyles = {
                 color: '#FF4D66',
             }
         }
-    }
+    },
+    grid: {
+        horizontal: { color: '#233554' },
+        vertical: { color: '#233554' },
+    },
+    xAxis: {
+        tickText: { color: '#8892B0' },
+    },
+    yAxis: {
+        tickText: { color: '#8892B0' },
+    },
+    crosshair: {
+        horizontal: { line: { color: '#8892B0' } },
+        vertical: { line: { color: '#8892B0' } },
+    },
 }
 
 const CoinChart = ({ ticker }) => {
@@ -111,35 +125,35 @@ const CoinChart = ({ ticker }) => {
     return (
         <div className="mt-10">
             <div className="flex flex-row gap-4">
-                <div className="font-semibold text-[20px]">
+                <div className="font-semibold text-[20px] text-[#CCD6F6]">
                     {ticker}
                 </div>
-                <div 
-                    className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
-                    onClick={onClickMinute}    
+                <div
+                    className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors"
+                    onClick={onClickMinute}
                 >
                     1분
                 </div>
-                <div 
-                    className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
+                <div
+                    className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors"
                     onClick={onClickHour}
                 >
                     1시간
                 </div>
-                <div 
-                    className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
-                    onClick={onClickFourHour}    
+                <div
+                    className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors"
+                    onClick={onClickFourHour}
                 >
                     4시간
                 </div>
-                <div className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center">
+                <div className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors">
                     6시간
                 </div>
-                <div className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center">
+                <div className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors">
                     12시간
                 </div>
-                <div 
-                    className="bg-[#1F78F2] px-2 py-1 rounded-sm text-white text-[12px] cursor-pointer flex items-center"
+                <div
+                    className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors"
                     onClick={onClickDay}
                 >
                     1일
@@ -158,7 +172,7 @@ const CoinChart = ({ ticker }) => {
                     </div>
                 )}
                 {isLoading && <div className="absolute inset-0 z-10 bg-gray-100 animate-pulse"/>}
-                <div id="chart" className="w-full h-150"/>
+                <div id="chart" className="w-full h-150 bg-[#112240]"/>
             </div>
         </div>
     )
