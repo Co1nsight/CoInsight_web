@@ -25,16 +25,16 @@ const NewsCard = ({ title, sentimentLabel, sentimentScore, relatedCryptos, publi
     const confidence = Math.round((sentimentScore || 0) * 100);
 
     return (
-        <div className="py-5 border-b border-[#F0F0F0] last:border-b-0 cursor-pointer hover:bg-[#FAFAFA] transition-colors px-2">
+        <div className="py-5 border-b border-[#233554] last:border-b-0 cursor-pointer hover:bg-[#1E3A5F] transition-colors px-2">
             <div className="flex flex-row items-start gap-3">
                 <div className="mt-0.5">
                     <RoundButton content={sentiment.label} status={sentiment.status} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                    <p className="text-[16px] font-medium text-[#212121] leading-snug">
+                    <p className="text-[16px] font-medium text-[#CCD6F6] leading-snug">
                         {title}
                     </p>
-                    <p className="text-[13px] text-[#9E9E9E]">
+                    <p className="text-[13px] text-[#8892B0]">
                         영향 코인: {coinNames} | {formatTimeAgo(publishedAt)} | 신뢰도: {confidence}%
                     </p>
                 </div>
@@ -44,4 +44,3 @@ const NewsCard = ({ title, sentimentLabel, sentimentScore, relatedCryptos, publi
 }
 
 export default NewsCard;
-

@@ -61,14 +61,14 @@ const CoinListTable = () => {
 
 
     return (
-        <div className="border border-[#E0E0E0] bg-white rounded-lg">
+        <div className="border border-[#233554] bg-[#112240] rounded-lg">
             {/* Header */}
-            <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-[#F0F0F0]">
-                <h2 className="text-[18px] font-bold text-[#212121]">코인 시세</h2>
+            <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-[#233554]">
+                <h2 className="text-[18px] font-bold text-[#CCD6F6]">코인 시세</h2>
             </div>
 
             {/* Table Header */}
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-3 text-[13px] text-[#9E9E9E] border-b border-[#F0F0F0]">
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-3 text-[13px] text-[#8892B0] border-b border-[#233554]">
                 <span>코인명</span>
                 <span className="text-right">가격</span>
                 <span className="text-right">등락폭</span>
@@ -77,7 +77,7 @@ const CoinListTable = () => {
 
             {/* Table Rows */}
             {loading ? (
-                <div className="px-6 py-8 text-center text-[14px] text-[#9E9E9E]">
+                <div className="px-6 py-8 text-center text-[14px] text-[#8892B0]">
                     로딩 중...
                 </div>
             ) : error ? (
@@ -89,11 +89,11 @@ const CoinListTable = () => {
                     {coins.map((coin, index) => (
                         <div
                             key={`${coin.ticker}-${index}`}
-                            className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#F0F0F0] last:border-b-0 hover:bg-[#FAFAFA] transition-colors cursor-pointer items-center"
+                            className="grid grid-cols-[2fr_1fr_1fr_1fr] px-6 py-4 border-b border-[#233554] last:border-b-0 hover:bg-[#1E3A5F] transition-colors cursor-pointer items-center"
                             onClick={() => nav(`/coindetail/${coin.ticker}`)}
                         >
-                            <span className="text-[14px] font-medium text-[#212121] flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-[#F0F0F0] flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <span className="text-[14px] font-medium text-[#CCD6F6] flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-[#1E3A5F] flex items-center justify-center overflow-hidden flex-shrink-0">
                                     {coin.logoUrl ? (
                                         <img
                                             src={coin.logoUrl}
@@ -101,32 +101,32 @@ const CoinListTable = () => {
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 e.target.style.display = "none";
-                                                e.target.parentElement.innerHTML = `<span class="text-[9px] font-bold text-[#9E9E9E]">${coin.ticker.slice(0, 2)}</span>`;
+                                                e.target.parentElement.innerHTML = `<span class="text-[9px] font-bold text-[#8892B0]">${coin.ticker.slice(0, 2)}</span>`;
                                             }}
                                         />
                                     ) : (
-                                        <span className="text-[9px] font-bold text-[#9E9E9E]">{coin.ticker.slice(0, 2)}</span>
+                                        <span className="text-[9px] font-bold text-[#8892B0]">{coin.ticker.slice(0, 2)}</span>
                                     )}
                                 </div>
                                 {coin.name} ({coin.ticker})
                             </span>
-                            <span className="text-[14px] text-[#212121] text-right">
+                            <span className="text-[14px] text-[#CCD6F6] text-right">
                                 {coin.currentPrice == null ? "-" : `₩${formatPrice(coin.currentPrice)}`}
                             </span>
                             <span className={`text-[14px] font-semibold text-right ${coin.changeRate >= 0 ? "text-[#FF4242]" : "text-[#4073FF]"}`}>
                                 {coin.changeRate == null ? "-" : `${formatChangeRate(coin.changeRate)}%`}
                             </span>
-                            <span className="text-[14px] text-[#787878] text-right">
+                            <span className="text-[14px] text-[#8892B0] text-right">
                                 {coin.tradingVolume24h == null ? "-" : `₩${formatTradeValue(coin.tradingVolume24h)}`}
                             </span>
                         </div>
                     ))}
                     {hasNext && (
-                        <div className="flex justify-center py-3 border-t border-[#F0F0F0]">
+                        <div className="flex justify-center py-3 border-t border-[#233554]">
                             <button
                                 onClick={loadMore}
                                 disabled={loadingMore}
-                                className="flex items-center gap-1 text-[13px] text-[#787878] hover:text-[#212121] transition-colors cursor-pointer disabled:opacity-50"
+                                className="flex items-center gap-1 text-[13px] text-[#8892B0] hover:text-[#CCD6F6] transition-colors cursor-pointer disabled:opacity-50"
                             >
                                 {loadingMore ? "로딩 중..." : (
                                     <>
@@ -144,4 +144,3 @@ const CoinListTable = () => {
 }
 
 export default CoinListTable;
-
