@@ -18,14 +18,14 @@ const PredictionNewsCard = ({status, title, publisher, time}) => {
 
 
     return (
-        <div className="flex flex-row items-center bg-white border border-[#EDEDED] px-4 py-2.5 gap-3">
+        <div className="flex flex-row items-center bg-[#112240] border border-[#233554] px-4 py-2.5 gap-3">
             <div>
                 <RoundButton status={labelType[status]} content={contentType[status]}/>
             </div>
-            <div className="text-[#212121] text-[14px] font-medium">
+            <div className="text-[#CCD6F6] text-[14px] font-medium">
                 {title}
             </div>
-            <div className="text-[#787878] text-[12px] flex items-center">
+            <div className="text-[#8892B0] text-[12px] flex items-center">
                 {publisher} | {formatTime(time)}
             </div>
         </div>

@@ -52,11 +52,11 @@ const MainPage = () => {
                 <div className="flex flex-row gap-6">
                     {/* 왼쪽: 뉴스 영역 */}
                     <div className="flex-1 flex flex-col gap-5">
-                        <div className="border border-[#E0E0E0] bg-white rounded-lg p-6">
-                            <h2 className="text-[18px] font-bold text-[#212121] mb-2">AI 뉴스 분석</h2>
+                        <div className="border border-[#233554] bg-[#112240] rounded-lg p-6">
+                            <h2 className="text-[18px] font-bold text-[#CCD6F6] mb-2">AI 뉴스 분석</h2>
                             <div>
                                 {newsLoading ? (
-                                    <div className="py-8 text-center text-[14px] text-[#9E9E9E]">
+                                    <div className="py-8 text-center text-[14px] text-[#8892B0]">
                                         로딩 중...
                                     </div>
                                 ) : newsError ? (
@@ -64,7 +64,7 @@ const MainPage = () => {
                                         {newsError}
                                     </div>
                                 ) : newsList.length === 0 ? (
-                                    <div className="py-8 text-center text-[14px] text-[#9E9E9E]">
+                                    <div className="py-8 text-center text-[14px] text-[#8892B0]">
                                         뉴스가 없습니다.
                                     </div>
                                 ) : (
@@ -80,11 +80,11 @@ const MainPage = () => {
                                             />
                                         ))}
                                         {newsHasNext && (
-                                            <div className="flex justify-center pt-3 border-t border-[#F0F0F0]">
+                                            <div className="flex justify-center pt-3 border-t border-[#233554]">
                                                 <button
                                                     onClick={loadMoreNews}
                                                     disabled={newsLoadingMore}
-                                                    className="flex items-center gap-1 text-[13px] text-[#787878] hover:text-[#212121] transition-colors cursor-pointer disabled:opacity-50"
+                                                    className="flex items-center gap-1 text-[13px] text-[#8892B0] hover:text-[#CCD6F6] transition-colors cursor-pointer disabled:opacity-50"
                                                 >
                                                     {newsLoadingMore ? "로딩 중..." : (
                                                         <>
@@ -112,5 +112,3 @@ const MainPage = () => {
 }
 
 export default MainPage;
-
-
