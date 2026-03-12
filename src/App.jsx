@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path='/coindetail/:ticker' element={<CoinDetailPage />} />
-        <Route path='/newsdetail' element={<NewsDetailPage />} />
+        <Route path='/newsdetail/:id' element={<NewsDetailPage />} />
         <Route path='/game' element={<GamePage />} />
         <Route path='/leaderboard' element={<LeaderBoardPage />} />
         <Route path='/search' element={<SearchResultPage />} />

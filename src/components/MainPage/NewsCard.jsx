@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import RoundButton from "../common/RoundButton";
 
 const sentimentMap = {
@@ -19,13 +20,14 @@ const formatTimeAgo = (dateStr) => {
     return `${diffDay}일 전`;
 };
 
-const NewsCard = ({ title, sentimentLabel, sentimentScore, relatedCryptos, publishedAt }) => {
+const NewsCard = ({ id, title, sentimentLabel, sentimentScore, relatedCryptos, publishedAt }) => {
+    const nav = useNavigate();
     const sentiment = sentimentMap[sentimentLabel] || sentimentMap.NEUTRAL;
     const coinNames = relatedCryptos?.map(c => c.ticker).join(", ") || "-";
     const confidence = Math.round((sentimentScore || 0) * 100);
 
     return (
-        <div className="py-5 border-b border-[#233554] last:border-b-0 cursor-pointer hover:bg-[#1E3A5F] transition-colors px-2">
+        <div className="py-5 border-b border-[#233554] last:border-b-0 cursor-pointer hover:bg-[#1E3A5F] transition-colors px-2" onClick={() => id && nav(`/newsdetail/${id}`)}>
             <div className="flex flex-row items-start gap-3">
                 <div className="mt-0.5">
                     <RoundButton content={sentiment.label} status={sentiment.status} />

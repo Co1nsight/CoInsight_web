@@ -72,6 +72,7 @@ const MainPage = () => {
                                         {newsList.map((news) => (
                                             <NewsCard
                                                 key={news.id}
+                                                id={news.id}
                                                 title={news.title}
                                                 sentimentLabel={news.sentimentLabel}
                                                 sentimentScore={news.sentimentScore}
