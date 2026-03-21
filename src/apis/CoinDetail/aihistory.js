@@ -2,7 +2,7 @@ import { instance } from "../../utils/axios";
 
 export const getAiPredictions = async (ticker) => {
     try {
-        const res = await instance.get(`/api/v1/crypto/${ticker}/predictions`);
+        const res = await instance.get(`/coinsight/api/v1/crypto/${ticker}/predictions`);
         //console.log(res);
         return res.data;
     } catch (error) {
@@ -13,7 +13,7 @@ export const getAiPredictions = async (ticker) => {
 
 export const getPredictionNews = async (ticker, predictionId) => {
     try {
-        const res = await instance.get(`/api/v1/crypto/${ticker}/predictions/${predictionId}/news`);
+        const res = await instance.get(`/coinsight/api/v1/crypto/${ticker}/predictions/${predictionId}/news`);
         console.log(res);
         return res.data;
     } catch (error) {
