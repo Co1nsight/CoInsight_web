@@ -2,7 +2,7 @@ import { instance } from "../../utils/axios";
 
 export const searchAll = async (keyword, cryptoLimit = 5, newsLimit = 5) => {
     try {
-        const res = await instance.get("/coinsight/api/v1/main/search", {
+        const res = await instance.get("/api/v1/main/search", {
             params: { keyword, cryptoLimit, newsLimit },
         });
         return res.data;

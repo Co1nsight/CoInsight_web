@@ -2,7 +2,7 @@ import { instance } from "../../utils/axios";
 
 export const getCandleInfo = async (ticker, unit=1, count=200) => {
     try {
-        const res = await instance.get(`/coinsight/api/v1/market/candles/${ticker}?unit=${unit}&count=${count}`);
+        const res = await instance.get(`/api/v1/market/candles/${ticker}?unit=${unit}&count=${count}`);
         //console.log(res.data);
         return res.data;
     } catch (error) {
