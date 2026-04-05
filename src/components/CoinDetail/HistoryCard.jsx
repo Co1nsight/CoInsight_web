@@ -2,6 +2,7 @@ import 'iconify-icon';
 import RoundButton from "../common/RoundButton";
 import { useState, useMemo } from 'react';
 import PredictionNewsCard from './PredictionNewsCard';
+import { getPredictionNews } from '../../apis/CoinDetail/aihistory';
 
 const HistoryCard = ({date, time, ai_prediction, actual_price, current_price, prediction_result, ai_status, prediction_status}) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +31,18 @@ const HistoryCard = ({date, time, ai_prediction, actual_price, current_price, pr
             status: currentStatus
         }
     }, [actual_price, current_price]);
+
+    const onClickOpen = async () => {
+        setIsOpen(!isOpen);
+        try {
+            const res = await getPredictionNews("ETH", 19497);
+            console.log(res);
+        } catch (error) {
+            console.error("데이터 받다오기 실패 : ", error);
+        }
+        
+
+    }
 
     return (
         <div className="w-full bg-[#0A192F] flex flex-col">
@@ -61,7 +74,7 @@ const HistoryCard = ({date, time, ai_prediction, actual_price, current_price, pr
 
                 <div
                     className="w-46 h-9 border border-[#233554] items-center flex flex-row justify-center rounded-sm text-[#8892B0] cursor-pointer gap-2 hover:border-[#64FFDA] hover:text-[#64FFDA] transition-colors"
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => setIsOpen(onClickOpen)}
                 >
                     <p>사용된 기사 보기</p>
                     {isOpen ?
