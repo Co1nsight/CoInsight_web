@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import RoundButton from "../common/RoundButton";
 
-const PredictionNewsCard = ({status, title, publisher, time}) => {
+const PredictionNewsCard = ({newsId, status, title, publisher, time}) => {
+    const nav = useNavigate();
     const labelType = {
         NEGATIVE : "negative",
         POSITIVE : "positive"
@@ -18,7 +20,10 @@ const PredictionNewsCard = ({status, title, publisher, time}) => {
 
 
     return (
-        <div className="flex flex-row items-center bg-[#112240] border border-[#233554] px-4 py-2.5 gap-3">
+        <div 
+            className="flex flex-row items-center bg-[#112240] border border-[#233554] px-4 py-2.5 gap-3 cursor-pointer"
+            onClick={() => nav(`/newsdetail/${newsId}`)}    
+        >
             <div>
                 <RoundButton status={labelType[status]} content={contentType[status]}/>
             </div>

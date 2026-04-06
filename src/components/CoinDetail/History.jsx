@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import HistoryCard from "./HistoryCard";
-import { getAiPredictions } from "../../apis/CoinDetail/aihistory";
+import { getAiPredictions, getAccumulatePrediction } from "../../apis/CoinDetail/aihistory";
+import OverallAcc from "./OverallAcc";
+import TimeAcc from "./TimeAcc";
 
 const History = ({ticker, currentPrice}) => {
     const timeMapping = {
@@ -13,6 +15,9 @@ const History = ({ticker, currentPrice}) => {
     const [predictionList, setPredictionList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(null);
+    const [stats, setStats] = useState([]); // intervalStats 배열용
+    const [summary, setSummary] = useState({ total: 0, success: 0, rate: 0 });
+
 
     useEffect(() => {
         const fetchAiHistory = async () => {
@@ -33,6 +38,30 @@ const History = ({ticker, currentPrice}) => {
         fetchAiHistory();
     }, [ticker]);
     console.log(predictionList);
+
+    useEffect(() => {
+        const fetchAccHistory = async () => {
+            try {
+                const res = await getAccumulatePrediction(ticker);
+                const data = res.data;
+
+                // 1. 배열 부분만 따로 저장
+                setStats(data.intervalStats || []);
+                
+                // 2. 나머지 요약 정보만 따로 저장
+                setSummary({
+                    total: data.totalPredictions,
+                    success: data.totalSuccesses,
+                    rate: data.overallSuccessRate
+                });
+            } catch (error) {
+                console.error("백엔드 데이터 불러오기 실패 : ", error);
+                setIsError("데이터를 불러오는 데 실패했습니다.");
+                
+            }
+        }
+        fetchAccHistory();
+    }, [ticker]);
 
     const renderContent = () => {
         if (isLoading) {
@@ -73,6 +102,8 @@ const History = ({ticker, currentPrice}) => {
       return (
         <HistoryCard
           key={item.predictionId}
+          ticker={ticker}
+          predictionId={item.predictionId}
           // 전체 객체(item)에서 가져오는 데이터
           date={item.predictionDate}
           time={item.predictionTime}
@@ -94,6 +125,7 @@ const History = ({ticker, currentPrice}) => {
 
     const time_type = ["1시간", "3시간", "12시간", "24시간"];
     return (
+        <>
         <div className="mt-8 border border-[#233554] bg-[#112240] p-8 rounded-sm flex flex-col">
             <div className="flex flex-row justify-between items-center">
                 <div className="text-[20px] font-bold text-[#CCD6F6]">
@@ -118,6 +150,38 @@ const History = ({ticker, currentPrice}) => {
                 {renderContent()}
             </div>
         </div>
+
+        <div className="mt-8 border border-[#233554] bg-[#112240] p-8 rounded-sm flex flex-col">
+            <div className="flex flex-col gap-6">
+                <div className="text-[20px] font-bold text-[#CCD6F6]">
+                    AI 예측 누적 통계
+                </div>
+
+                <div className="flex flex-row gap-12">
+                    <OverallAcc title={"총 예측 횟수"} value={summary.total}/>
+                    <OverallAcc title={"예측 성공"} value={summary.success}/>
+                    <OverallAcc title={"성공률"} value={summary.rate}/>
+                </div>
+
+                <div className="flex flex-col gap-6">
+                    <div className="text-[16px] font-semibold text-[#CCD6F6]">
+                        예측 간격 별 예측 성공률
+                    </div>
+
+                    <div className="flex flex-row gap-10">
+                        {stats.map((e) => (
+                            <TimeAcc 
+                                key={e.intervalType} 
+                                time={e.description} 
+                                value={e.successRate} 
+                            />
+                        ))}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </>
     )
 }
 
