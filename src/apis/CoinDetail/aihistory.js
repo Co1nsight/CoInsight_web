@@ -21,3 +21,13 @@ export const getPredictionNews = async (ticker, predictionId) => {
         throw error;
     }
 }
+
+export const getAccumulatePrediction = async (ticker) => {
+    try {
+        const res = await instance.get(`/api/v1/crypto/${ticker}/predictions/stats`);
+        return res.data;
+    } catch (error) {
+        console.error("누적 예측 히스토리 데이터 조회 실패 : ", error);
+        throw error;
+    }
+}

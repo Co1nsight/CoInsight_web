@@ -82,19 +82,19 @@ const CoinChart = ({ ticker }) => {
     const onClickHour = () => fetchCandleData(60);
     const onClickFourHour = () => fetchCandleData(240);
     
-    const onClickDay = () => {
-        const options = {method: 'GET', headers: {accept: 'application/json'}};
+    // const onClickDay = () => {
+    //     const options = {method: 'GET', headers: {accept: 'application/json'}};
 
-        fetch(`https://api.bithumb.com/v1/candles/days?market=${ticker}&count=200`, options)
-            .then(response => response.json())
-            .then(response => {
-                if (response && response.length > 0) {
-                    const formattedData = formatData(response);
-                    setCoinInfo(formattedData);
-                }
-            })
-            .catch(err => console.error(err));
-    }
+    //     fetch(`https://api.bithumb.com/v1/candles/days?market=${ticker}&count=200`, options)
+    //         .then(response => response.json())
+    //         .then(response => {
+    //             if (response && response.length > 0) {
+    //                 const formattedData = formatData(response);
+    //                 setCoinInfo(formattedData);
+    //             }
+    //         })
+    //         .catch(err => console.error(err));
+    // }
 
     useEffect(() => {
         fetchCandleData();
@@ -146,7 +146,7 @@ const CoinChart = ({ ticker }) => {
                 >
                     4시간
                 </div>
-                <div className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors">
+                {/* <div className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors">
                     6시간
                 </div>
                 <div className="border border-[#233554] hover:border-[#64FFDA] hover:text-[#64FFDA] px-2 py-1 rounded-sm text-[#8892B0] text-[12px] cursor-pointer flex items-center transition-colors">
@@ -157,7 +157,7 @@ const CoinChart = ({ ticker }) => {
                     onClick={onClickDay}
                 >
                     1일
-                </div>
+                </div> */}
             </div>
             <div className="relative">
                 {isError && (
